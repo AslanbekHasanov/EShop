@@ -12,8 +12,7 @@ namespace EShop.Services.Order
             {
                 return 0;
             }
-
-            return Math.Max(15, order.GetTotalWeight()*2);
+            return Math.Max(15, order.GetTotalWeight() * 2);
         }
 
         public DateTimeOffset GetDate()

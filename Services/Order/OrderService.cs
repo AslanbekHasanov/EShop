@@ -14,16 +14,13 @@ namespace EShop.Services.Order
         public OrderService(IList<Product> products) =>
             lineItems = products;
 
-
         public int GetTotal() => lineItems.Count;
         public double GetTotalWeight() => lineItems.Sum(x => x.Weight);
+        
         public void SetShippingType(IShipping shippingType) => 
             shipping = shippingType;
-        
-        public double GetShippingCost()
-        {
-            return shipping.GetCost(this);
-        }
+
+        public double GetShippingCost()=> shipping.GetCost(this);
         public DateTimeOffset GetShippingDate() => DateTime.Now;
     }
 }
