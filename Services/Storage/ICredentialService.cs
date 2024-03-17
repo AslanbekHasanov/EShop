@@ -3,6 +3,7 @@
 //----------------------------------------
 
 using EShop.Models.Auth;
+using System.Collections.Generic;
 
 namespace EShop.Services.Storage
 {

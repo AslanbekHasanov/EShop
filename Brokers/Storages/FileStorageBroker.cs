@@ -3,6 +3,8 @@
 //----------------------------------------
 
 using EShop.Models.Auth;
+using System.Collections.Generic;
+using System.IO;
 
 namespace EShop.Brokers.Storages
 {
@@ -26,7 +28,7 @@ namespace EShop.Brokers.Storages
 
                 credentials.Add(new Credential()
                     {Username = credentialProperties[0], 
-                    Password = credentialProperties[1]});
+                     Password = credentialProperties[1]});
             }
 
             return credentials;
