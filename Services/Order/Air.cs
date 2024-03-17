@@ -2,6 +2,8 @@
 // Tarteeb School (c) All rights reserved
 //----------------------------------------
 
+using System;
+
 namespace EShop.Services.Order
 {
     public class Air : IShipping
@@ -16,9 +18,7 @@ namespace EShop.Services.Order
             return Math.Max(20, order.GetTotalWeight()*3);
         }
 
-        public DateTimeOffset GetDate()
-        {
-            return DateTime.Now.AddDays(7);
-        }
+        public DateTimeOffset GetDate()=>
+                DateTime.Now.AddDays(7);
     }
 }

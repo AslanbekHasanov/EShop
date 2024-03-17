@@ -2,6 +2,8 @@
 // Tarteeb School (c) All rights reserved
 //----------------------------------------
 
+using System;
+
 namespace EShop.Services.Order
 {
     public class Sea : IShipping
@@ -15,9 +17,7 @@ namespace EShop.Services.Order
             return Math.Max(15, order.GetTotalWeight() * 2);
         }
 
-        public DateTimeOffset GetDate()
-        {
-            return DateTime.Now.AddDays(6);
-        }
+        public DateTimeOffset GetDate()=>
+             DateTime.Now.AddDays(6);
     }
 }

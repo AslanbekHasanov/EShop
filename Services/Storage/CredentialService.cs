@@ -5,6 +5,8 @@
 using EShop.Brokers.Loggings;
 using EShop.Brokers.Storages;
 using EShop.Models.Auth;
+using System;
+using System.Collections.Generic;
 
 namespace EShop.Services.Storage
 {
@@ -21,19 +23,43 @@ namespace EShop.Services.Storage
 
         public Credential AddCredential(Credential credential)
         {
-            return credential is null
-                ? CreateAndLogInvalidCredential()
-                : ValidateAndAddCredential(credential);
+            try
+            {
+                return credential is null
+                    ? CreateAndLogInvalidCredential()
+                    : ValidateAndAddCredential(credential);
+            }
+            catch (Exception exception)
+            {
+                this.loggingBroker.LogError(exception);
+                return new Credential();
+            }
         }
 
         public List<Credential> GetAllCredentials()
         {
-            if (this.storageBroker.GetAll().Count == 0)
+            try
             {
+                if (this.storageBroker.GetAll().Count == 0)
+                {
+                    this.loggingBroker.LogError("No data found.");
+                    return new List<Credential>();
+                }
+                else
+                {
+                    this.loggingBroker.LogInformation("=== All data ===");
+                    foreach (var credentialItem in this.storageBroker.GetAll())
+                    {
+                        Console.WriteLine($"{credentialItem.Username} {credentialItem.Password}");
+                    }
+                    return this.storageBroker.GetAll();
+                }
+            }
+            catch (Exception exception)
+            {
+                this.loggingBroker.LogError(exception);
                 return new List<Credential>();
             }
-
-            return this.storageBroker.GetAll();
         }
 
         private Credential CreateAndLogInvalidCredential()
@@ -48,11 +74,12 @@ namespace EShop.Services.Storage
             if ( String.IsNullOrWhiteSpace(credential.Username)
                 || String.IsNullOrWhiteSpace(credential.Password))
             {
-                this.loggingBroker.LogError("Contact details missing.");
+                this.loggingBroker.LogError("Credential details missing.");
                 return new Credential();
             }
             else
             {
+                this.loggingBroker.LogInformation("Added successfully.");
                 return this.storageBroker.Add(credential);
             }
         }

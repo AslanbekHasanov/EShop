@@ -7,6 +7,8 @@ using EShop.Models.Shop;
 using EShop.Services.Login;
 using EShop.Services.Order;
 using EShop.Services.Storage;
+using System;
+using System.Collections.Generic;
 
 namespace EShop
 {
