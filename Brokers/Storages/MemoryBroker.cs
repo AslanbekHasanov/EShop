@@ -10,10 +10,8 @@ namespace EShop.Brokers.Storages
     public class MemoryBroker : IStorageBroker<Product>
     {
         static List<Product> products = new List<Product> {
-            new Product { Name = "Banana"},
-            new Product { Name = "Ananas"},
-            new Product { Name = "Apple"},
-            new Product { Name = "Orange"},
+            new Product { Name = "Banana",Price = 30000,Weight = 10},
+            new Product { Name = "Ananas", Price = 20000, Weight = 30}
         };
 
         static List<Product> cartProducts = new List<Product>();

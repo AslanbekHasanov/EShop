@@ -2,7 +2,7 @@
 // Tarteeb School (c) All rights reserved
 //----------------------------------------
 
-using EShop.Brokers.Storages;
+using EShop.Models.Auth;
 using EShop.Models.Shop;
 using EShop.Services.Login;
 using EShop.Services.Order;
@@ -16,90 +16,96 @@ namespace EShop
     {
 
         static IList<IShipping> shippings = new List<IShipping> { new Sea(), new Air(), new Ground() };
+        static ILoginService loginService = new LoginService();
+        static ICredentialService credentialService = new CredentialService();
+        static IProductService productService = new ProductService();  
 
         public static void Main(string[] args)
         {
-            ILoginService loginService = new LoginService();
-            IProductService productService = new ProductService();
-            Console.WriteLine("------ Welcome to electronik shopping ------");
-            bool  isLogged = false;
+            bool isContinue = false;
+            bool isLogIn = true;
+
+
             do
             {
-                Console.Write("Can you input your name : ");  
-                string userNameInput = Console.ReadLine();  
-            } while (isLogged);
+                Console.WriteLine("Welcome to, my project");
+                Console.WriteLine("1.Auth");
+                Console.WriteLine("2.Show products");
+                Console.WriteLine("3.Show shipping method");
+                Console.WriteLine("4.Show shipping method");
+                Console.Write("Enter your command: ");
+                string commandMenu = Console.ReadLine();
 
-            List<Product> selectedProducts = new List<Product>();
-
-            bool choosingProduct = true;
-            do
-            {
-                PrintProduct();
-                Console.WriteLine("Select product");
-                string input = Console.ReadLine();
-                int selectedIndex = Convert.ToInt32(input);
-                if (selectedIndex == 0)
+                if (commandMenu.Contains("1"))
                 {
-                    choosingProduct = false;
+                    do
+                    {
+                        Credential credential = new Credential();
+                        Console.WriteLine("=== Auth ===");
+                        Console.WriteLine("1 Log In");
+                        Console.WriteLine("2 Sign Up");
+
+                        Console.Write("Enter your command: ");
+                        string commandLogInAndSignUp = Console.ReadLine();
+
+                        Console.Write("Enter your user name: ");
+                        credential.UserName = Console.ReadLine();
+                        Console.Write("Enter your user password: ");
+                        credential.Password = Console.ReadLine();
+
+                        if (commandLogInAndSignUp.Contains("1") is true)
+                        {
+                            if (loginService.CheckUserLogin(credential) is true)
+                            {
+                                isLogIn = false;
+                            }
+                        }
+                        else if (commandLogInAndSignUp.Contains("2") is true)
+                        {
+                            credentialService.AddCredential(credential);
+                        }
+                    } while (isLogIn is true);
                 }
-                else
+
+                if (commandMenu.Contains("2"))
                 {
-                    Console.Write("Enter weight: ");
-                    string inputWeight = Console.ReadLine();
-                    double weight = Convert.ToDouble(inputWeight);
-                    products[selectedIndex - 1].Weight = weight;
-                    selectedProducts.Add(products[selectedIndex - 1]);
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Successfully added ✔✔");
-                    Console.ResetColor();
+                    Console.WriteLine("=== Show products ===");
+                    Console.WriteLine("1.Products");
+                    Console.WriteLine("2.Add to cart");
+
+                    Console.Write("Enter your command:(1 or 2) ");
+                    string commandProduct = Console.ReadLine();
+
+                    if (commandProduct.Contains("1") is true)
+                    {
+                        productService.GetProducts();
+                    }
+                    else if(commandProduct.Contains("2") is true)
+                    {
+                        Product product = new Product();
+                        Console.Write("Enter product name: ");
+                        product.Name = Console.ReadLine();
+                        Console.Write("Enter product price: ");
+                        product.Price = Convert.ToDecimal(Console.ReadLine());
+                        Console.Write("Enter products weight: ");
+                        product.Weight = Convert.ToDouble(Console.ReadLine());
+                        
+                        productService.AddToCart(product);
+                    }
                 }
-            } while (choosingProduct);
-            Console.Clear();
 
-            OrderService order = new OrderService(selectedProducts);
-            PrintShippingTypes();
-            Console.WriteLine("Select shippingType");
-            string inputShipping = Console.ReadLine();
-            int selectedShipping = Convert.ToInt32(inputShipping);
-            order.SetShippingType(shippings[selectedShipping]);
-            Console.Clear();
-            Console.WriteLine("Shipping successfully added ✔✔");
-            PrintOrderDetails(order);
-        }
+                //Show shipping method not implement in Program class
+                //Show total price not imlement in Program class
 
-        static void PrintProduct()
-        {
-            Console.WriteLine("0) Order create");
-            Console.WriteLine("-------Start-of-product-------------");
-            int index = 1;
-            foreach (var item in products)
-            {
-                Console.WriteLine(index++ + ")" + item.Name);
+                Console.Write("Is continue(no or yes): ");
+                string isContinueCommand = Console.ReadLine();
 
-            }
-            Console.WriteLine("-----------End-of-product-----------");
-
-        }
-
-        static void PrintShippingTypes()
-        {
-            Console.WriteLine("-------Start-of-shipping-------------");
-            int index = 0;
-            foreach (var item in shippings)
-            {
-                Console.WriteLine(index++ + ")" + item.GetType().Name);
-
-            }
-            Console.WriteLine("-----------End-of-shipping-----------");
-
-        }
-
-        static void PrintOrderDetails(OrderService order)
-        {
-            Console.WriteLine($"Shipping cost: ${order.GetShippingCost()}");
-            Console.WriteLine($"Shipping weight: ${order.GetTotalWeight()}");
-            Console.WriteLine($"Shipping date: ${order.GetShippingDate()}");
+                if (isContinueCommand.ToLower().Contains("no"))
+                {
+                    isContinue = false;
+                }
+            } while (isContinue is true);
         }
     }
 }

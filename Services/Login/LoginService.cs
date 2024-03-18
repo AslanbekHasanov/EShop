@@ -37,7 +37,7 @@ namespace EShop.Services.Login
 
         private bool ValidateAndCheckUserLogin(Credential credential)
         {
-            if (String.IsNullOrWhiteSpace(credential.Username)
+            if (String.IsNullOrWhiteSpace(credential.UserName)
                 || String.IsNullOrWhiteSpace(credential.Password))
             {
                 this.loggingBroker.LogError("Credential details are missing.");
@@ -47,14 +47,14 @@ namespace EShop.Services.Login
             {
                 foreach (Credential credentialItem in storageBroker.GetAll())
                 {
-                    if (credential.Username == credentialItem.Username 
-                        && credential.Password == credentialItem.Password)
+                    if (credential.UserName.Contains(credentialItem.UserName) 
+                        && credential.Password.Contains(credentialItem.Password))
                     {
                         this.loggingBroker.LogInformation("successful.");
                         return true;
                     }
                 }
-                this.loggingBroker.LogError("Not Found");
+                this.loggingBroker.LogError("Not Found.");
                 return false;
             }
         }
