@@ -10,7 +10,7 @@ namespace EShop.Brokers.Storages
 {
     public class FileStorageBroker : IStorageBroker<Credential>
     {
-        private const string FilePath = "Assets/Credentials.txt";
+        private const string FilePath = "../../../Assets/Credentials.txt";
 
         public FileStorageBroker()
         {
@@ -27,7 +27,7 @@ namespace EShop.Brokers.Storages
                 string[] credentialProperties = credentialLine.Split('*');
 
                 credentials.Add(new Credential()
-                    {Username = credentialProperties[0], 
+                    {UserName = credentialProperties[0], 
                      Password = credentialProperties[1]});
             }
 
@@ -36,7 +36,7 @@ namespace EShop.Brokers.Storages
         
         public Credential Add(Credential credential)
         {
-            string credentialLine = $"{credential.Username}*{credential.Password}\n";
+            string credentialLine = $"{credential.UserName}*{credential.Password}\n";
             File.AppendAllText(FilePath,credentialLine);
 
             return credential;

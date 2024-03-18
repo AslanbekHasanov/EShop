@@ -5,6 +5,7 @@
 using EShop.Brokers.Loggings;
 using EShop.Brokers.Storages;
 using EShop.Models.Auth;
+using EShop.Services.Login;
 using System;
 using System.Collections.Generic;
 
@@ -14,11 +15,13 @@ namespace EShop.Services.Storage
     {
         private readonly IStorageBroker<Credential> storageBroker;
         private readonly ILoggingBroker loggingBroker;
+        private readonly ILoginService loginService;
 
         public CredentialService()
         {
             this.storageBroker = new FileStorageBroker();
             this.loggingBroker = new LoggingBroker();
+            this.loginService = new LoginService();
         }
 
         public Credential AddCredential(Credential credential)
@@ -50,7 +53,7 @@ namespace EShop.Services.Storage
                     this.loggingBroker.LogInformation("=== All data ===");
                     foreach (var credentialItem in this.storageBroker.GetAll())
                     {
-                        Console.WriteLine($"{credentialItem.Username} {credentialItem.Password}");
+                        Console.WriteLine($"{credentialItem.UserName} {credentialItem.Password}");
                     }
                     return this.storageBroker.GetAll();
                 }
@@ -71,7 +74,7 @@ namespace EShop.Services.Storage
 
         private Credential ValidateAndAddCredential(Credential credential)
         {
-            if ( String.IsNullOrWhiteSpace(credential.Username)
+            if ( String.IsNullOrWhiteSpace(credential.UserName)
                 || String.IsNullOrWhiteSpace(credential.Password))
             {
                 this.loggingBroker.LogError("Credential details missing.");
@@ -79,9 +82,30 @@ namespace EShop.Services.Storage
             }
             else
             {
-                this.loggingBroker.LogInformation("Added successfully.");
-                return this.storageBroker.Add(credential);
+                if (this.CheckUserLogin(credential) is false)
+                {
+                    this.loggingBroker.LogInformation("Added successfully.");
+                    return this.storageBroker.Add(credential);
+                }
+                else
+                { 
+                    this.loggingBroker.LogError("There is a credential thread");
+                    return new Credential();
+                }
             }
+        }
+
+        private bool CheckUserLogin(Credential credential)
+        {
+            foreach (var credentialItem in this.storageBroker.GetAll())
+            {
+                if (credentialItem.UserName.Contains(credential.UserName)
+                    && credentialItem.Password.Contains(credential.Password))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
